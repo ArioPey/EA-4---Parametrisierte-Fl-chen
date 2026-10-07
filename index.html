@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Farbig gefüllte 2D Geometrie</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <p class="label">WEBGL · FRB</p>
+  <h1>Farbig gefüllte 2D Geometrie</h1>
+  <p>Eine eigene 2D-Geometrie aus Dreiecken mit interpolierten Vertex-Farben.</p>
+  <span id="status">WebGL wird initialisiert …</span>
+</header>
+
+<main>
+<section class="card">
+  <div class="heading">
+    <div><small>VISUALISIERUNG</small><h2>Farbige geometrische Katze</h2></div>
+    <b>TRIANGLES · INDEXED</b>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="glCanvas" width="900" height="650"
+            aria-label="WebGL Darstellung einer farbig gefüllten 2D-Geometrie">
+      Ihr Browser unterstützt kein HTML5 Canvas.
+    </canvas>
+  </div>
+
+  <div class="stats">
+    <div><small>Vertices</small><strong id="vertexCount">–</strong></div>
+    <div><small>Dreiecke</small><strong id="triangleCount">–</strong></div>
+    <div><small>Draw Call</small><strong>drawElements</strong></div>
+  </div>
+</section>
+
+<section class="card">
+  <small>DOKUMENTATION</small>
+  <h2>Umsetzung</h2>
+
+  <div class="grid">
+    <div>
+      <h3>Geometrie</h3>
+      <p>
+        Die Katze wurde als eigene 2D-Flächengeometrie aufgebaut. Die Flächen
+        bestehen ausschließlich aus Dreiecken. Über Indizes können Vertices
+        von mehreren Dreiecken gemeinsam verwendet werden.
+      </p>
+    </div>
+    <div>
+      <h3>Farben</h3>
+      <p>
+        Jeder Vertex besitzt zusätzlich zu seiner Position eine RGB-Farbe.
+        Der Vertex-Shader gibt diese Farbe an den Fragment-Shader weiter.
+        WebGL interpoliert die Farben innerhalb jedes Dreiecks automatisch.
+      </p>
+    </div>
+  </div>
+
+  <h3>Technische Umsetzung</h3>
+  <ul>
+    <li>Rendering mit WebGL und <code>gl.TRIANGLES</code>.</li>
+    <li>Die Geometrie wird über einen Index-Buffer dargestellt.</li>
+    <li><code>drawElements()</code> verwendet die Anzahl der Index-Einträge als count.</li>
+    <li>Positions-, Farb- und Index-Arrays sind aufeinander abgestimmt.</li>
+    <li>Die Farben werden zwischen den Vertices interpoliert.</li>
+  </ul>
+
+  <h3>Benutzungshinweise</h3>
+  <p>
+    Die Seite benötigt einen Browser mit WebGL-Unterstützung. Es ist keine
+    Interaktion vorgesehen. Für die Qualitätssicherung kann die Browser-Konsole
+    geöffnet werden; WebGL- und Shader-Fehler werden zusätzlich auf der Seite angezeigt.
+  </p>
+
+  <h3>Quelle</h3>
+  <p>
+    Es wurden keine externen Grafiken oder fremden Geometriedaten übernommen.
+    Die dargestellte Geometrie und die Farbauswahl wurden für diese Aufgabe
+    eigenständig erstellt.
+  </p>
+</section>
+</main>
+
+<footer>Farbig gefüllte 2D Geometrie · WebGL · eigene Geometrie</footer>
+<script src="script.js"></script>
+</body>
+</html>
