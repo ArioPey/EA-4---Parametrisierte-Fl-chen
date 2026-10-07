@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Parametrisierte Flächen</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <p class="label">WEBGL · KUF</p>
+  <h1>Parametrisierte Flächen</h1>
+  <p>Algorithmisch erzeugte 3D-Flächen mit Linien, Füllung und flächenabhängigen Farbverläufen.</p>
+  <div class="toolbar">
+    <button id="toggleButton" type="button">Fläche wechseln (B)</button>
+    <button id="modeButton" type="button">Modus: Füllung + Linien</button>
+    <span id="status">WebGL wird initialisiert …</span>
+  </div>
+</header>
+
+<main>
+<section class="card visual-card">
+  <div class="heading">
+    <div>
+      <small>VISUALISIERUNG</small>
+      <h2 id="surfaceTitle">Fläche 1</h2>
+    </div>
+    <span class="badge" id="modeBadge">Füllung + Linien</span>
+  </div>
+
+  <div class="canvas-wrap">
+    <canvas id="glCanvas" width="1000" height="700"
+            aria-label="WebGL Darstellung einer parametrisierten Fläche">
+      Ihr Browser unterstützt kein HTML5 Canvas.
+    </canvas>
+  </div>
+
+  <div class="info-row">
+    <div><small>Parametrisierung</small><strong id="formulaShort">–</strong></div>
+    <div><small>Vertices</small><strong id="vertexCount">–</strong></div>
+    <div><small>Modus</small><strong id="renderMode">–</strong></div>
+  </div>
+</section>
+
+<section class="card">
+  <small>FLÄCHEN & FORMELN</small>
+  <h2>Dokumentation</h2>
+
+  <article class="surface-doc">
+    <h3>1. Möbius-Band</h3>
+    <p>
+      Eine einseitige Fläche mit einer halben Verdrehung. Sie wird aus einem
+      Parameter <code>u</code> für den Kreis und <code>v</code> für die Breite erzeugt.
+    </p>
+    <p class="formula">
+      x = (1 + v·cos(u/2))·cos(u)<br>
+      y = (1 + v·cos(u/2))·sin(u)<br>
+      z = v·sin(u/2)
+    </p>
+    <p>
+      Parameterbereiche: <code>u ∈ [0, 2π]</code>,
+      <code>v ∈ [-0.45, 0.45]</code>.
+    </p>
+    <p>
+      Quelle:
+      <a href="http://www.3d-meier.de/tut3/Seite0.html" target="_blank" rel="noopener">
+        3D-Meier – Parametrisierte Flächen
+      </a>
+    </p>
+  </article>
+
+  <article class="surface-doc">
+    <h3>2. Torus</h3>
+    <p>
+      Ein Torus entsteht durch zwei periodische Winkel. Die Fläche wird
+      algorithmisch als regelmäßiges Parameter-Gitter erzeugt.
+    </p>
+    <p class="formula">
+      x = (R + r·cos(v))·cos(u)<br>
+      y = (R + r·cos(v))·sin(u)<br>
+      z = r·sin(v)
+    </p>
+    <p>
+      Mit <code>R = 0.62</code>, <code>r = 0.25</code>,
+      <code>u,v ∈ [0, 2π]</code>.
+    </p>
+    <p>
+      Quelle:
+      <a href="http://www.3d-meier.de/tut3/Seite0.html" target="_blank" rel="noopener">
+        3D-Meier – Parametrisierte Flächen
+      </a>
+    </p>
+  </article>
+
+  <article class="surface-doc own">
+    <h3>3. Eigene Kreation: Wellenblüte ★</h3>
+    <p>
+      Diese Fläche ist eine eigene Kombination aus radialer Welle und einer
+      zusätzlichen dreifachen Winkelmodulation. Dadurch entsteht eine
+      blütenartige Oberfläche mit sechs sichtbaren Ausbuchtungen.
+    </p>
+    <p class="formula">
+      ρ(u) = 0.62 + 0.14·sin(3u)<br>
+      x = ρ(u)·cos(u)·(0.78 + 0.22·cos(v))<br>
+      y = ρ(u)·sin(u)·(0.78 + 0.22·cos(v))<br>
+      z = 0.22·sin(v) + 0.08·sin(3u)
+    </p>
+    <p>
+      Parameterbereiche: <code>u,v ∈ [0, 2π]</code>.
+      Die Formel wurde für diese Aufgabe selbst entwickelt.
+    </p>
+  </article>
+
+  <h3>Benutzung</h3>
+  <ul>
+    <li><strong>B</strong> oder „Fläche wechseln“ schaltet zwischen den drei Flächen um.</li>
+    <li>„Modus“ wechselt zwischen Füllung + Linien, nur Füllung und nur Linien.</li>
+    <li>Alle Vertices werden algorithmisch aus den Parametern erzeugt.</li>
+    <li>Die Flächen werden in NDC skaliert, damit sie im Bereich −1 bis +1 bleiben.</li>
+  </ul>
+
+  <h3>Technische Umsetzung</h3>
+  <p>
+    Für jede Fläche wird ein regelmäßiges Parameter-Gitter erzeugt. Aus jeweils
+    vier benachbarten Gitterpunkten werden zwei Dreiecke gebildet. Die Farbe
+    wird abhängig von der Höhe und der Position des jeweiligen Vertex erzeugt.
+    Dadurch entstehen flächenabhängige Farbverläufe. Zusätzlich wird ein
+    separater Linien-Draw-Call über dieselben Indizes verwendet.
+  </p>
+
+  <h3>Fehlerbehandlung / QA</h3>
+  <p>
+    WebGL-Kontext, Shader-Kompilierung, Program-Linking und Draw-Fehler werden
+    geprüft. Öffne in Chrome die Entwicklertools und kontrolliere die Console.
+  </p>
+
+  <h3>Quellen</h3>
+  <p>
+    Parametrisierte Flächen und mathematische Anregungen:
+    <a href="http://www.3d-meier.de/tut3/Seite0.html" target="_blank" rel="noopener">
+      3D-Meier
+    </a>.
+    Die eigene „Wellenblüte“ wurde selbst parametrisiert.
+  </p>
+  <p>
+    Zusätzliche Referenz zum Ausprobieren parametrischer Flächen:
+    <a href="https://stemkoski.github.io/Three.js/Graphulus-Surface.html" target="_blank" rel="noopener">
+      Stemkoski – Graphulus Surface
+    </a>.
+  </p>
+</section>
+</main>
+
+<footer>Parametrisierte Flächen · WebGL · algorithmische Geometrie</footer>
+<script src="script.js"></script>
+</body>
+</html>
